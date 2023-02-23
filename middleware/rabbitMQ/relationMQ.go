@@ -38,7 +38,7 @@ func (f *FollowMQ) destroy() {
 }
 
 // Publish follow关系的发布配置。
-func (f *FollowMQ) Publish(message string) {
+func (f *FollowMQ) Publish(message string) error {
 
 	_, err := f.channel.QueueDeclare(
 		f.queueName,
@@ -57,7 +57,7 @@ func (f *FollowMQ) Publish(message string) {
 		panic(err)
 	}
 
-	f.channel.Publish(
+	err = f.channel.Publish(
 		f.exchange,
 		f.queueName,
 		false,
@@ -66,6 +66,7 @@ func (f *FollowMQ) Publish(message string) {
 			ContentType: "text/plain",
 			Body:        []byte(message),
 		})
+	return err
 
 }
 
@@ -113,6 +114,7 @@ func (f *FollowMQ) Consumer() {
 }
 
 // 关系添加的消费方式。
+
 func (f *FollowMQ) consumerFollowAdd(msgs <-chan amqp.Delivery) {
 	for d := range msgs {
 		// 参数解析。
@@ -122,7 +124,7 @@ func (f *FollowMQ) consumerFollowAdd(msgs <-chan amqp.Delivery) {
 		targetId, _ := strconv.Atoi(params[1])
 		key := strconv.Itoa(userId) + strconv.Itoa(targetId) + "follow"
 		//查询数据库是否存在关系：若存在，什么也不做。
-		count, err := dao.QueryFollow(userId, targetId)
+		count, err := dao.QueryFollow(userId, targetId) //确保消息队列操作的幂等性
 		if err != nil {
 			log.Println("查询关注信息失败", err)
 		}
@@ -131,13 +133,16 @@ func (f *FollowMQ) consumerFollowAdd(msgs <-chan amqp.Delivery) {
 			err = redis.DelCache(fmt.Sprintf("followList%v", userId), redis.GetRdbFollowingClient())
 			err = redis.DelCache(fmt.Sprintf("fanList%v", userId), redis.GetRdbFollowerClient())
 			if err := dao.NewRelation((int64)(userId), (int64)(targetId)); err != nil {
-				log.Println(err.Error())
+				log.Println("关系加入失败,err:", err.Error())
 			}
 
 			go func() {
 				time.Sleep(time.Millisecond) //延时双删策略。保证数据一致性。
 				err = redis.DelCache(fmt.Sprintf("followList%v", userId), redis.GetRdbFollowingClient())
 				err = redis.DelCache(fmt.Sprintf("fanList%v", userId), redis.GetRdbFollowerClient())
+				if err != nil {
+					log.Println(err.Error())
+				}
 				redis.SetRedisNum(key, key, redis.GetRdbRelationClient())
 			}()
 		}

@@ -30,10 +30,20 @@ func SendMessage(res *data.DouyinMessageActionRequest) error {
 	return nil
 }
 
-func HistoryMessage(res *data.DouyinMessageHistoryRequest) ([]*data.Message, error) {
+func HistoryMessage(res *data.DouyinMessageHistoryRequest) (history []*data.MessageHistory, err error) {
 	messages, err := dao.MessageHistory(res.UserId, res.ToUserId, res.LastTime)
 	if err != nil {
 		return nil, err
 	}
-	return messages, nil
+	history = make([]*data.MessageHistory, len(messages))
+	for i, value := range messages {
+		history[i] = &data.MessageHistory{
+			Id:         value.Id,
+			UserID:     value.UserID,
+			ToUserID:   value.ToUserID,
+			Content:    value.Content,
+			CreateTime: value.CreateTime.Unix(),
+		}
+	}
+	return
 }

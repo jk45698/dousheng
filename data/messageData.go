@@ -17,7 +17,7 @@ type DouyinMessageHistoryRequest struct {
 }
 type DouyinMessageHistoryResponse struct {
 	Response
-	Messages []*Message
+	Messages []*MessageHistory `json:"message_list"`
 }
 type Message struct {
 	Id         int64     `gorm:"primarykey" json:"id,omitempty"`
@@ -25,6 +25,14 @@ type Message struct {
 	ToUserID   int64     `gorm:"column:to_user_id" json:"to_user_id,omitempty"`
 	Content    string    `gorm:"column:content" json:"content,omitempty"`
 	CreateTime time.Time `gorm:"column:created_at" json:"create_time"`
+}
+
+type MessageHistory struct {
+	Id         int64  `json:"id"`
+	UserID     int64  `json:"from_user_id"`
+	ToUserID   int64  `json:"to_user_id"`
+	Content    string `json:"content"`
+	CreateTime int64  `json:"create_time"`
 }
 type MessageRaw struct {
 	gorm.Model

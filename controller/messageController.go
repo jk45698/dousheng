@@ -14,6 +14,7 @@ import (
 
 // 聊天记录
 func MessageChat(c *gin.Context) {
+	//TODO:修改时间戳格式
 	curId, err1 := strconv.ParseInt(strings.TrimSpace(c.GetString("userId")), 10, 64)
 	if err1 != nil {
 		log.Println(err1.Error())
@@ -31,7 +32,7 @@ func MessageChat(c *gin.Context) {
 	var latestTime time.Time
 	if lastTime != "" {
 		int64Time, _ := strconv.ParseInt(lastTime, 10, 64)
-		latestTime = time.Unix(int64Time/1000, 0)
+		latestTime = time.Unix(int64Time, 0)
 	} else {
 		latestTime = time.Now()
 	}
