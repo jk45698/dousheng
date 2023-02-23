@@ -56,7 +56,7 @@
 - jjk关注 -> 关注列表 -> 好友列表
 - tjt粉丝列表 -> 关注 ->好友列表
 
-测试结果：[https://www.bilibili.com/video/BV1rM41177ka/?spm_id_from=333.999.0.0](https://juqnqytxyi.feishu.cn/docx/S92Ydhk4FoIVNkxClpicQO8inl4)
+测试结果：https://juqnqytxyi.feishu.cn/docx/S92Ydhk4FoIVNkxClpicQO8inl4
 
 
 
