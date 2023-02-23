@@ -1,24 +1,75 @@
 # 第五届字节跳动青训营“抖声”项目
 
-gogogo 团队
+#### 技术选型
 
-2023.2.10 jijinkang 简单说明：完成 Feed、publish/list 两个接口业务逻辑
+框架：Gin、Gorm
 
-- config：SQL 等配置
-- data：数据声明
-- initDAO：数据库初始化及建表
+中间件：JWT、FFmpeg、MinIO、RabbitMQ、Redis
 
-  2023.2.11 jijinkang
+数据库：MySQL
 
+
+
+#### 项目配置
+
+- config.go中MinIO配置Endpoint变量应改为服务器（即本机）IP+port9000
 - FFmpeg: 安装下载地址：https://www.gyan.dev/ffmpeg/builds/#release-builds [ffmpeg-5.0.1-essentials_build.zip ] (https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-5.0.1-essentials_build.zip)77 MB [.sha256](https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-5.0.1-essentials_build.zip.sha256)
+- MinIO:windows 服务端下载地址： https://dl.minio.io/server/minio/release/windows-amd64/minio.exe    执行命令：` .\minio.exe server [存储目录]`
+  - MinIO需设置永久访问链接
 
-- MinIO:windows 服务端下载地址： https://dl.minio.io/server/minio/release/windows-amd64/minio.exe 命令` .\minio.exe server [存储目录]`
+- 安装rabbitMQ
+- 安装redis，启动服务端：`redis-server.exe redis.windows.conf`
+  - 设置密码 tiktok：config set requirepass root 
+  - 设置持久化： config set stop-writes-on-bgsave-error no
 
-- **省略中途本地存储的步骤，视频流直接转存到 MinIO， 使用 URL 取帧获得 cover**，不知道能否使用视频流获得 cover
 
-  2023.2.13 wangmingxian 简单说明：完成 Register, Login, User 三个部分及 jwt 鉴权
 
-  2023.2.18 zk 完成/douyin/favorite/action/接口，继续写/douyin/favorite/list/接口需要 Video 和 User 的完整的数据库
+#### 代码结构
 
-补充：config MinIO配置Endpoint应改为服务器（即本机）ip，即可正常播放视频
+```undefined
+├─.idea
+├─config  配置
+├─controller 控制器
+├─dao  数据库
+├─data  结构体
+├─gateway  路由
+├─middleware  中间件
+│  ├─FFmpeg  视频截图
+│  ├─jwt     鉴权
+│  ├─MinIO   对象存储
+│  ├─rabbitMQ 消息队列
+│  └─redis    缓存
+├─public      
+└─service     服务层
+    └─relation
+```
 
+
+
+#### 功能测试
+
+功能测试设计：
+
+- jjk上传两个视频（测试开始前）
+- 视频流接口  -> tjt注册 -> tjt登录 -> tjt投稿视频 -> tjt发布列表及用户信息
+- jjk登录 -> jjk点赞 -> jjk喜欢列表 -> jjk评论 -> 查看评论列表
+- jjk关注 -> 关注列表 -> 好友列表
+- tjt粉丝列表 -> 关注 ->好友列表
+
+测试结果：https://www.bilibili.com/video/BV1rM41177ka/?spm_id_from=333.999.0.0
+
+
+
+#### 团队成员
+
+| **团队成员** |    **主要贡献**    |
+| :----------: | :----------------: |
+|    冀锦康    |      视频模块      |
+|    王明贤    |      用户模块      |
+|    王重人    | 关注模块、消息模块 |
+|    谭欣妍    |      评论模块      |
+|     周珂     |      点赞模块      |
+
+
+
+未完待续。。。
