@@ -2,6 +2,7 @@ package dao
 
 import (
 	"dousheng/config"
+	"dousheng/data"
 	"fmt"
 	"log"
 	"os"
@@ -42,8 +43,8 @@ type Favorite struct {
 
 type follows struct {
 	Id       int64 `gorm:"column:id; not null; type:bigint; primaryKey; autoIncrement; comment:'关注id'"`
-	UserId   int64 `gorm:"column:user_id; not null; type:bigint; comment:'用户id'"`
-	FollowId int64 `gorm:"column:to_user_id; not null; type:bigint; comment:'被关注者id'"`
+	UserId   int64 `gorm:"column:user_id; not null; type:bigint; Index:follow,priority:11;comment:'用户id'"`
+	FollowId int64 `gorm:"column:to_user_id; not null; type:bigint; Index:follow,priority:12;comment:'被关注者id'"`
 	IsFollow int8  `gorm:"column:is_follow; not null; type:tinyint; default:1 ;comment:'是否关注，默认为1'"`
 }
 
@@ -69,6 +70,7 @@ func CreateTables() {
 	// DB.Migrator().DropTable(&Favorite{})
 	// DB.Migrator().DropTable(&follows{})
 	// DB.Migrator().DropTable(&comments{})
+	//DB.AutoMigrate(&users{})
 	if !DB.Migrator().HasTable(&users{}) {
 		DB.AutoMigrate(&users{})
 		log.Print("successfully created table-users")
@@ -110,6 +112,8 @@ func CreateTables() {
 	} else {
 		log.Print("table-comments existed")
 	}
+
+	go GetStarUsers()
 }
 
 func Init() {
@@ -152,4 +156,18 @@ func Init() {
 // 不用担心协程并发使用同样的db对象会共用同一个连接，db对象在调用他的方法的时候会从数据库连接池中获取新的连接
 func GetDB() *gorm.DB {
 	return DB
+}
+
+var StarUsers map[int64]data.Empty
+
+func GetStarUsers() {
+	var Stars []data.UserId
+	err := GetDB().Where("is_star = 1").Find(&Stars).Error
+	if err != nil {
+		log.Println("Find Stars err:", err.Error())
+		return
+	}
+	for star := range Stars {
+		StarUsers[int64(star)] = data.Empty{}
+	}
 }
