@@ -50,9 +50,10 @@ type follows struct {
 
 type messages struct {
 	gorm.Model
-	UserId   int64  `gorm:"column:user_id; not null; type:bigint;Index:talk,priority:11; comment:'消息发送者id'"`
-	ToUserId int64  `gorm:"column:to_user_id; not null; type:bigint;Index:talk,priority:12; comment:'消息接收者id'"`
-	Content  string `gorm:"column:content; not null; type:varchar(255); comment:'消息内容'"`
+	UserId     int64  `gorm:"column:user_id; not null; type:bigint;Index:talk,priority:11; comment:'消息发送者id'"`
+	ToUserId   int64  `gorm:"column:to_user_id; not null; type:bigint;Index:talk,priority:12; comment:'消息接收者id'"`
+	Content    string `gorm:"column:content; not null; type:varchar(255); comment:'消息内容'"`
+	CreateTime string `gorm:"column:create_time;index:idx_create_time"; comment:'消息创建时间'"`
 }
 
 type comments struct {
@@ -70,7 +71,7 @@ func CreateTables() {
 	// DB.Migrator().DropTable(&Favorite{})
 	// DB.Migrator().DropTable(&follows{})
 	// DB.Migrator().DropTable(&comments{})
-	//DB.AutoMigrate(&users{})
+	DB.AutoMigrate(&messages{})
 	if !DB.Migrator().HasTable(&users{}) {
 		DB.AutoMigrate(&users{})
 		log.Print("successfully created table-users")

@@ -20,11 +20,11 @@ type DouyinMessageHistoryResponse struct {
 	Messages []*MessageHistory `json:"message_list"`
 }
 type Message struct {
-	Id         int64     `gorm:"primarykey" json:"id,omitempty"`
-	UserID     int64     `gorm:"column:user_id" json:"user_id,omitempty"`
-	ToUserID   int64     `gorm:"column:to_user_id" json:"to_user_id,omitempty"`
-	Content    string    `gorm:"column:content" json:"content,omitempty"`
-	CreateTime time.Time `gorm:"column:created_at" json:"create_time"`
+	Id         int64  `gorm:"primarykey" json:"id,omitempty"`
+	UserID     int64  `gorm:"column:user_id" json:"user_id,omitempty"`
+	ToUserID   int64  `gorm:"column:to_user_id" json:"to_user_id,omitempty"`
+	Content    string `gorm:"column:content" json:"content,omitempty"`
+	CreateTime string `gorm:"column:create_time" json:"create_time"`
 }
 
 type MessageHistory struct {
@@ -36,9 +36,10 @@ type MessageHistory struct {
 }
 type MessageRaw struct {
 	gorm.Model
-	UserID   int64  `gorm:"column:user_id"`
-	ToUserID int64  `gorm:"column:to_user_id"`
-	Content  string `gorm:"column:content"`
+	UserID     int64  `gorm:"column:user_id"`
+	ToUserID   int64  `gorm:"column:to_user_id"`
+	Content    string `gorm:"column:content"`
+	CreateTime string `gorm:"column:create_time"`
 }
 
 func (MessageRaw) TableName() string {

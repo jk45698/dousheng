@@ -7,6 +7,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func SendMessage(res *data.DouyinMessageActionRequest) error {
@@ -36,13 +37,15 @@ func HistoryMessage(res *data.DouyinMessageHistoryRequest) (history []*data.Mess
 		return nil, err
 	}
 	history = make([]*data.MessageHistory, len(messages))
+	loc, _ := time.LoadLocation("Local")
 	for i, value := range messages {
+		theTime, _ := time.ParseInLocation("2006-01-02 15:04:05", value.CreateTime, loc)
 		history[i] = &data.MessageHistory{
 			Id:         value.Id,
 			UserID:     value.UserID,
 			ToUserID:   value.ToUserID,
 			Content:    value.Content,
-			CreateTime: value.CreateTime.Unix(),
+			CreateTime: theTime.Unix(),
 		}
 	}
 	return

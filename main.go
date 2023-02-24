@@ -3,7 +3,6 @@ package main
 import (
 	"dousheng/dao"
 	"dousheng/gateway"
-	"dousheng/middleware/MinIO"
 	"dousheng/middleware/filter"
 	tool "dousheng/middleware/rabbitMQ"
 	"dousheng/middleware/redis"
@@ -14,8 +13,7 @@ func main() {
 	dao.Init()
 	dao.CreateTables()
 
-	MinIO.Init()
-
+	//MinIO.Init()
 	tool.InitMq()
 	redis.InitRedis()
 	filter.InitFilter()
